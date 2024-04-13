@@ -4,28 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_app"
     tools:context="com.example.Pagos">
 
     <TextView
-        android:id="@+id/tvcabecera"
+        android:id="@+id/tvDesign_Top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/curved_bottom_blue_background"
+        android:drawableBottom="@drawable/cash"
+        android:paddingLeft="160dp"
+        android:paddingTop="45dp"
+        android:paddingRight="160dp"
+        android:paddingBottom="45dp"
+        android:text="PAGOS"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="1">
+
+    </TextView>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintWidth_percent="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:drawableBottom="@drawable/baseline_settings_24"
+        android:background="@drawable/button_setting_style"
+        android:paddingBottom="6dp"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/tvDesign_Top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingEnd="10dp"
+        android:paddingBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@id/tvDesign_Bottom">
+
+        <Button
+            android:id="@+id/btn_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Categorias"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:background="@drawable/categories_button_style"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            >
+
+        </Button>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contend_pagos"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/btn_categories"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_total_payments"
+            android:background="@color/white"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            >
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_total_payments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/categories_button_style"
+            android:text="Total pagos:"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:paddingStart="30dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+
+            >
+
+        </TextView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout >
+
+    <TextView
+        android:id="@+id/tvDesign_Bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_percent="1"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/curved_bottom_blue_background"
+        android:background="@drawable/curved_top_blue_background">
 
-        ></TextView>
+    </TextView>
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    android:text="Holaaaaa"
-    ></TextView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/botton_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navbar"
+        style="@style/BottomNavigation"
+        >
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
