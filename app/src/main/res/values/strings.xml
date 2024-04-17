@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">App_finanzas</string>
+    <string-array name="categories_array">
+        <item>Categorias</item>
+        <item>Alimentación</item>
+        <item>Transporte</item>
+        <item>Vivienda</item>
+    </string-array>
 </resources>
+

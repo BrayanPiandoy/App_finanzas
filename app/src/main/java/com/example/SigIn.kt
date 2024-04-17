@@ -6,21 +6,14 @@ import android.os.Bundle
 import android.widget.Button
 import com.example.app_finanzas.R
 
-class MainActivity : AppCompatActivity() {
+class SigIn : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_sig_in)
 
-        val btnpayments = findViewById<Button>(R.id.payments)
-        val btnlogin = findViewById<Button>(R.id.logIn)
+        val btnReturn = findViewById<Button>(R.id.btn_Return)
 
-
-        btnpayments.setOnClickListener {
-            val intent = Intent(this, Pagos::class.java)
-            startActivity(intent)
-        }
-
-        btnlogin.setOnClickListener {
+        btnReturn.setOnClickListener {
             val intent = Intent(this, LogIn::class.java)
             startActivity(intent)
         }
