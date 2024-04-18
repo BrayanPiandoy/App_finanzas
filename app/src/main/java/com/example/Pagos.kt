@@ -1,20 +1,29 @@
 package com.example
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import com.example.app_finanzas.R
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class Pagos : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagos)
 
+        val btnsingOut = findViewById<Button>(R.id.btnsignout)
 
         setup_categories()
+
+        btnsingOut.setOnClickListener {
+            signOut()
+        }
 
     }
 
@@ -51,6 +60,15 @@ class Pagos : AppCompatActivity() {
             }
 
         }
+
+    }
+
+    private fun signOut() {
+        Firebase.auth.signOut()
+        val intent = Intent(this, LogIn::class.java)
+        startActivity(intent)
+
+        finish()
 
     }
 }
