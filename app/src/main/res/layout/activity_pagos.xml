@@ -7,6 +7,8 @@
     android:background="@color/background_app"
     tools:context="com.example.Pagos">
 
+
+
     <TextView
         android:id="@+id/tvDesign_Top"
         android:layout_width="0dp"
@@ -42,6 +44,15 @@
         android:background="@drawable/button_setting_style"
         android:paddingBottom="6dp"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="holaaa"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        ></TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
