@@ -24,7 +24,7 @@ class SigIn : AppCompatActivity() {
         database = FirebaseDatabase.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        dbReference = database.reference.child("User")
+        dbReference = database.reference.child("USUARIO")
 
         val btnReturn = findViewById<Button>(R.id.btn_Return)
         val btnRegister = findViewById<Button>(R.id.btn_registro)

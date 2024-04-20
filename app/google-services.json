@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "191794652768",
-    "project_id": "appfinanzas-9f5ab",
-    "storage_bucket": "appfinanzas-9f5ab.appspot.com"
+    "project_number": "742293030850",
+    "project_id": "appfinanzadb",
+    "storage_bucket": "appfinanzadb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:191794652768:android:067808a17f1a26b4ae0505",
+        "mobilesdk_app_id": "1:742293030850:android:2eb0e1d40cd05f91b3f85b",
         "android_client_info": {
           "package_name": "com.example.app_finanzas"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDb5r7sBGTPu4dTXVMeIHBiyd8-Yxubx0k"
+          "current_key": "AIzaSyDCYPQ5bExiTcsYRMv8MhX1Jt-o-xECxvM"
         }
       ],
       "services": {
