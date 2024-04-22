@@ -13,29 +13,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App_finanzas"
         tools:targetApi="31">
-
+        <activity
+            android:name="com.example.GastosActivity2"
+            android:exported="false" />
+        <activity
+            android:name="com.example.IngresosActivity"
+            android:exported="false" />
         <activity
             android:name="com.example.SigIn"
             android:exported="false" />
-
         <activity
             android:name="com.example.LogIn"
             android:exported="false" />
-
         <activity
             android:name="com.example.Pagos"
-            android:exported="false" />
-
-        <!-- Actividad principal de tu aplicación -->
+            android:exported="false" /> <!-- Actividad principal de tu aplicación -->
         <activity
             android:name="com.example.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
