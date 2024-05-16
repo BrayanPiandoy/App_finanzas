@@ -21,12 +21,22 @@ import com.google.firebase.database.ValueEventListener
 import kotlin.math.log
 
 class Pagos : AppCompatActivity() {
+
+    object CategoriaSingleton {
+        val categories = ArrayList<String>()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagos)
 
         obtenerDatosUsuario()
         setup_categories()
+
+        val btn_addpago = findViewById<Button>(R.id.btn_addpago)
+        btn_addpago.setOnClickListener {
+                val intent = Intent(this, Ingreso_pagos::class.java)
+                startActivity(intent)
+        }
 
         val btnsingOut = findViewById<Button>(R.id.btnsignout)
         btnsingOut.setOnClickListener {

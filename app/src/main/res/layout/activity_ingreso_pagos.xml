@@ -4,57 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.SigIn"
-    android:background="#B9DDFF"
-    >
-
-
-    <Button
-        android:id="@+id/btn_Return"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:drawableLeft="@drawable/icon_return"
-        android:background="#00000000"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        ></Button>
-
-    <TextView
-        android:id="@+id/content_logintop"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-    </TextView>
+    android:background="@color/blue_light_background"
+    tools:context="com.example.Ingreso_pagos">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/login_backgroundshape"
-        android:paddingTop="60dp"
+        app:layout_constraintHeight_percent="0.9"
+        app:layout_constraintWidth_percent="0.9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_logintop"
-        app:layout_constraintVertical_bias="1.0">
+
+        android:background="@drawable/button_setting_style">
 
         <TextView
             android:id="@+id/tv_Cuenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Crear una nueva&#10;        Cuenta"
+            android:text="Registra un nuevo&#10;            Pago"
             android:textColor="@color/black"
             android:textSize="35dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="60dp"
             tools:ignore="MissingConstraints">
 
         </TextView>
@@ -65,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
-            android:text="Nombre"
+            android:text="Categoria"
             android:textSize="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.149"
@@ -74,86 +50,127 @@
             app:layout_constraintVertical_bias="0.06"
             />
 
-        <EditText
-        android:id="@+id/etName"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@drawable/edittext_border"
-        android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
-        app:layout_constraintVertical_bias="0.05"
-        app:layout_constraintWidth_percent="0.7" />
+        <Button
+            android:id="@+id/add_category"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.08"
+            app:layout_constraintHeight_percent="0.04"
+            app:layout_constraintStart_toEndOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tv_Cuenta"
+            android:layout_marginTop="29dp"
+            android:layout_marginStart="15dp"
+            android:text="+"
+            android:background="@drawable/btn_add_categories"
+            >
+
+        </Button>
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/autoCompleteTextView"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvName"
+            app:layout_constraintVertical_bias="0.05"
+            app:layout_constraintWidth_percent="0.7" />
 
         <TextView
-            android:id="@+id/tvUser"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Correo"
+            android:text="Fecha"
             android:textSize="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.149"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etName"
+            app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView"
             app:layout_constraintVertical_bias="0.06" />
 
         <EditText
-            android:id="@+id/etUser"
+            android:id="@+id/etDate"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/edittext_border"
-            android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:inputType="date"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvUser"
+            app:layout_constraintTop_toBottomOf="@id/tvDate"
             app:layout_constraintVertical_bias="0.05"
             app:layout_constraintWidth_percent="0.7" />
 
         <TextView
-            android:id="@+id/tvPassword"
+            android:id="@+id/tvMonto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contraseña"
+            android:text="Monto"
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvUser"
-            app:layout_constraintTop_toBottomOf="@id/etUser"
+            app:layout_constraintStart_toStartOf="@id/tvDate"
+            app:layout_constraintTop_toBottomOf="@id/etDate"
             app:layout_constraintVertical_bias="0.05" />
 
 
         <EditText
-            android:id="@+id/etPassword"
+            android:id="@+id/etMonto"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_border"
+            android:inputType="number"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMonto"
+            app:layout_constraintVertical_bias="0.05"
+            app:layout_constraintWidth_percent="0.7" />
+
+
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Nombre"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="@id/tvMonto"
+            app:layout_constraintTop_toBottomOf="@+id/etMonto" />
+
+        <EditText
+            android:id="@+id/etName"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/edittext_border"
             android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPassword"
+            app:layout_constraintTop_toBottomOf="@id/tvNombre"
             app:layout_constraintVertical_bias="0.05"
             app:layout_constraintWidth_percent="0.7" />
 
         <Button
-            android:id="@+id/btn_registro"
+            android:id="@+id/btn_registropago"
             android:layout_width="280dp"
             android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
             android:backgroundTint="#2D8BBA"
             android:text="Registrar"
             android:textColor="@color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etPassword"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/etName"
             app:layout_constraintVertical_bias="0.25"
             app:layout_constraintWidth_percent="0.4" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
