@@ -2,6 +2,7 @@ package com.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -10,15 +11,21 @@ import androidx.appcompat.app.AlertDialog
 import com.example.app_finanzas.R
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import java.lang.ref.Reference
+import kotlin.math.log
 
 class Ingreso_pagos : AppCompatActivity() {
 
     private val categories = ArrayList<String>()
     private lateinit var dbReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ingreso_pagos)
@@ -79,7 +86,9 @@ class Ingreso_pagos : AppCompatActivity() {
 
     private fun registrarPago(category: String, date: String, monto: String, nombre: String) {
         val userId = auth.currentUser?.uid
-        if(userId != null){
+        if (userId != null) {
+            val montoInt = monto.toInt()
+
             val userDB = dbReference.child("USUARIO").child(userId)
 
             // Generar un nuevo identificador único para los pagos
@@ -92,23 +101,30 @@ class Ingreso_pagos : AppCompatActivity() {
                 "monto" to monto,
                 "nombre" to nombre
             )
-            userDB.child("PAGOS").child(pagoId!!).setValue(nuevoPago)
+            userDB.child("PAGOS").child(pagoId!!).setValue(nuevoPago).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    // Actualizar el total de pagos después de registrar el nuevo pago
+                    actualizarTotalPagos(userId, montoInt)
 
-            Toast.makeText(baseContext, "Pago registrado exitosamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, "Pago registrado exitosamente", Toast.LENGTH_SHORT).show()
 
-            val etdate = findViewById<EditText>(R.id.etDate)
-            val etMonto = findViewById<EditText>(R.id.etMonto)
-            val etName = findViewById<EditText>(R.id.etName)
-            val autoCompleteTextView = findViewById<MaterialAutoCompleteTextView>(R.id.autoCompleteTextView)
+                    val etdate = findViewById<EditText>(R.id.etDate)
+                    val etMonto = findViewById<EditText>(R.id.etMonto)
+                    val etName = findViewById<EditText>(R.id.etName)
+                    val autoCompleteTextView = findViewById<MaterialAutoCompleteTextView>(R.id.autoCompleteTextView)
 
-            // Limpiar los campos después de registrar el pago
-            autoCompleteTextView.setText("")
-            etdate.setText("")
-            etMonto.setText("")
-            etName.setText("")
+                    // Limpiar los campos después de registrar el pago
+                    autoCompleteTextView.setText("")
+                    etdate.setText("")
+                    etMonto.setText("")
+                    etName.setText("")
+                } else {
+                    Toast.makeText(baseContext, "Error al registrar el pago", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-
     }
+
 
 
     private fun showAddCategoryDialog() {
@@ -132,6 +148,29 @@ class Ingreso_pagos : AppCompatActivity() {
         }
 
         builder.show()
+    }
+
+    private fun actualizarTotalPagos(userId: String, monto: Int) {
+        val userDB = dbReference.child("USUARIO").child(userId)
+        val totalPagosRef = userDB.child("TOTAL_PAGOS")
+
+        totalPagosRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                var currentTotal = mutableData.getValue(Int::class.java) ?: 0
+                mutableData.value = currentTotal + monto
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                if (databaseError != null) {
+                    Log.w("Firebase", "TotalPagos:onComplete", databaseError.toException())
+                }
+            }
+        })
     }
 
 
