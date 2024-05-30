@@ -123,7 +123,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:textColor="#615E5E"
                 android:textStyle="bold"
-                android:text="aaaaa"
+                android:text="Comienza a gestionar tus pagos"
                 android:textSize="20dp"
                 >
             </TextView>

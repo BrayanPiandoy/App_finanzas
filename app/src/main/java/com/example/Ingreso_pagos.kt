@@ -1,5 +1,6 @@
 package com.example
 
+import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,8 @@ import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import java.lang.ref.Reference
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.log
 
 class Ingreso_pagos : AppCompatActivity() {
@@ -68,24 +71,61 @@ class Ingreso_pagos : AppCompatActivity() {
             showAddCategoryDialog_remove()
         }
 
+        val etDate = findViewById<EditText>(R.id.etDate)
+        etDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            // Crear y mostrar el DatePickerDialog
+            val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+
+                // Formatear la fecha seleccionada
+                val formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
+
+                // Establecer el texto formateado en el EditText
+                etDate.setText(formattedDate)
+            }, year, month, day)
+
+            datePickerDialog.show()
+        }
+
+
         btn_addpago.setOnClickListener {
             val category = autoCompleteTextView.text.toString().trim()
             val date = etdate.text.toString().trim()
             val monto = etMonto.text.toString().trim()
             val nombre = etName.text.toString().trim()
 
-            if(category.isEmpty()){
-                Toast.makeText(baseContext, "Debe seleccionar una categoría", Toast.LENGTH_SHORT).show()
-            } else if(date.isEmpty()){
-                Toast.makeText(baseContext, "Debe ingresar una fecha", Toast.LENGTH_SHORT).show()
-            } else if(monto.isEmpty()){
-                Toast.makeText(baseContext, "Debe ingresar un monto", Toast.LENGTH_SHORT).show()
-            } else if(nombre.isEmpty()){
-                Toast.makeText(baseContext, "Debe ingresar un nombre", Toast.LENGTH_SHORT).show()
-            } else {
-                registrarPago(category, date, monto, nombre)
+            // Validar el monto
+            if (monto.isEmpty() || monto.toInt() == 0 || monto.toInt() > 1000000000) {
+                Toast.makeText(baseContext, "Ingrese un monto válido (mayor a 0 y menor o igual a 1000000000)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // Validar el nombre
+            if (nombre.isEmpty() || nombre.length > 30) {
+                Toast.makeText(baseContext, "Ingrese un nombre válido (no vacío y máximo 30 caracteres)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validar la categoría
+            if (category.isEmpty()) {
+                Toast.makeText(baseContext, "Debe seleccionar una categoría", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validar la fecha (puedes agregar la validación según tu formato)
+            if (date.isEmpty()) {
+                Toast.makeText(baseContext, "Debe ingresar una fecha", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Si pasa todas las validaciones, registrar el pago
+            registrarPago(category, date, monto, nombre)
         }
+
 
     }
 

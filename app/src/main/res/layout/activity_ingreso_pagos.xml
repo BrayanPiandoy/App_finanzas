@@ -112,12 +112,17 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/edittext_border"
-            android:inputType="date"
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDate"
             app:layout_constraintVertical_bias="0.05"
+            android:focusable="false"
+            android:clickable="true"
+            android:focusableInTouchMode="false"
+            android:drawableEnd="@drawable/ic_calendar"
+            android:drawablePadding="8dp"
+            android:inputType="none"
             app:layout_constraintWidth_percent="0.7" />
 
         <TextView
