@@ -66,6 +66,22 @@
 
         </Button>
 
+        <Button
+            android:id="@+id/remove_category"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.08"
+            app:layout_constraintHeight_percent="0.04"
+            app:layout_constraintStart_toEndOf="@id/add_category"
+            app:layout_constraintTop_toBottomOf="@id/tv_Cuenta"
+            android:layout_marginTop="29dp"
+            android:layout_marginStart="15dp"
+            android:text="-"
+            android:background="@drawable/btn_add_categories"
+            >
+
+        </Button>
+
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/autoCompleteTextView"
             android:layout_width="0dp"

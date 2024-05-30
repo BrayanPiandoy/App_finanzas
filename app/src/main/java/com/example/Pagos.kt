@@ -1,5 +1,6 @@
 package com.example
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +21,6 @@ class Pagos : AppCompatActivity() {
 
     private lateinit var dbReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
-
     private val pagosList = mutableListOf<Pago>()
 
     object CategoriaSingleton {
@@ -36,7 +36,7 @@ class Pagos : AppCompatActivity() {
 
         obtenerDatosUsuario()
         obtenerDatosPago()
-        setup_categories()
+        loadCategoriesAndFilterPayments()
         mostrarTotalPagos()
 
         val btnAddPago = findViewById<Button>(R.id.btn_addpago)
@@ -58,7 +58,7 @@ class Pagos : AppCompatActivity() {
         fun onItemDismiss(position: Int)
     }
 
-    class PagosAdapter(private val pagos: List<Pago>) :
+    class PagosAdapter(private val context: Context, private val pagos: List<Pago>) :
         RecyclerView.Adapter<PagosAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -87,18 +87,52 @@ class Pagos : AppCompatActivity() {
 
         override fun onItemDismiss(position: Int) {
             val pago = pagos[position]
-            eliminarPagoEnFirebase(pago.id)
+            eliminarPagoEnFirebase(pago.id, pago.monto.toInt())
             notifyItemRemoved(position)
         }
 
-        private fun eliminarPagoEnFirebase(pagoId: String) {
+        private fun eliminarPagoEnFirebase(pagoId: String, monto: Int) {
             val currentUser = FirebaseAuth.getInstance().currentUser
             currentUser?.uid?.let { uid ->
                 val dbReference = FirebaseDatabase.getInstance().getReference("USUARIO").child(uid).child("PAGOS")
-                dbReference.child(pagoId).removeValue()
+                dbReference.child(pagoId).removeValue().addOnCompleteListener {
+                        task ->
+                    if (task.isSuccessful) {
+                        actualizarTotalPagos(uid, -monto)
+                        Toast.makeText(context, "Pago eliminado correctamente", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Error al eliminar el pago", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
+
+        private fun actualizarTotalPagos(userId: String, monto: Int) {
+            val userDB = FirebaseDatabase.getInstance().getReference("USUARIO").child(userId)
+            val totalPagosRef = userDB.child("TOTAL_PAGOS")
+
+            totalPagosRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                    var currentTotal = mutableData.getValue(Int::class.java) ?: 0
+                    mutableData.value = currentTotal + monto
+                    return Transaction.success(mutableData)
+                }
+
+                override fun onComplete(
+                    databaseError: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (databaseError != null) {
+                        Log.w("Firebase", "TotalPagos:onComplete", databaseError.toException())
+                    }
+                }
+            })
+        }
     }
+
+
+
 
     private fun obtenerDatosPago() {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -137,7 +171,7 @@ class Pagos : AppCompatActivity() {
             val rcPagos = findViewById<RecyclerView>(R.id.recycle_pagos)
             rcPagos.layoutManager = LinearLayoutManager(this@Pagos)
 
-            val pagoAdapter = PagosAdapter(pagosList.map { Pago(it.id, it.categoria, it.fecha, it.monto, it.nombre) })
+            val pagoAdapter = PagosAdapter(this@Pagos, pagosList.map { Pago(it.id, it.categoria, it.fecha, it.monto, it.nombre) })
 
             val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.RIGHT
@@ -162,36 +196,71 @@ class Pagos : AppCompatActivity() {
         }
     }
 
-    private fun setup_categories() {
+
+    private fun loadCategoriesAndFilterPayments() {
         val spinnerCategories: Spinner = findViewById(R.id.spinner_categories)
         val textCategoriesSelected: TextView = findViewById(R.id.tv_categorias)
 
-        spinnerCategories.prompt = "Categorías"
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.uid?.let { uid ->
+            val dbReference = FirebaseDatabase.getInstance().getReference("USUARIO").child(uid).child("CATEGORIAS")
 
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.categories_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinnerCategories.adapter = adapter
-        }
+            dbReference.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val categories = mutableListOf<String>()
 
-        spinnerCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                textCategoriesSelected.text = parent.getItemAtPosition(position)?.toString() ?: ""
-            }
+                        // Agregar la opción por defecto "General"
+                        categories.add("General")
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // No es necesario implementar esto si no es necesario
-            }
+                        // Recorrer todas las categorías y agregarlas a la lista
+                        for (categorySnapshot in snapshot.children) {
+                            val category = categorySnapshot.getValue(String::class.java)
+                            category?.let { categories.add(it) }
+                        }
+
+                        // Crear un adaptador para el Spinner con las categorías obtenidas
+                        val adapter = ArrayAdapter(
+                            this@Pagos,
+                            android.R.layout.simple_spinner_item,
+                            categories
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        spinnerCategories.adapter = adapter
+
+                        // Establecer un listener para cuando se seleccione una categoría
+                        spinnerCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                val selectedCategory = parent?.getItemAtPosition(position).toString()
+
+                                // Actualizar el TextView con la categoría seleccionada
+                                textCategoriesSelected.text = selectedCategory
+
+                                // Filtrar los pagos según la categoría seleccionada
+                                if (selectedCategory == "General") {
+                                    // Mostrar todos los pagos si se selecciona "General"
+                                    actualizarAdaptadores(pagosList)
+                                } else {
+                                    // Filtrar los pagos por la categoría seleccionada
+                                    val filteredPayments = pagosList.filter { it.categoria == selectedCategory }
+                                    actualizarAdaptadores(filteredPayments)
+                                }
+                            }
+
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                                // No se realiza ninguna acción si no se selecciona nada
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("LecturaBD", "Error al leer datos de categorías: ${error.message}")
+                }
+            })
         }
     }
+
 
     private fun signOut() {
         FirebaseAuth.getInstance().signOut()

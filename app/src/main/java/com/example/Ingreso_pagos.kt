@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
+import com.google.firebase.database.ValueEventListener
 import java.lang.ref.Reference
 import kotlin.math.log
 
@@ -39,9 +40,8 @@ class Ingreso_pagos : AppCompatActivity() {
         dbReference = FirebaseDatabase.getInstance().reference
         auth = FirebaseAuth.getInstance()
 
-        categories.add("Categoría 1")
-        categories.add("Categoría 2")
-        categories.add("Categoría 3")
+        consultarCategorias()
+
 
         // Configuramos el adaptador para el MaterialAutoCompleteTextView
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
@@ -61,6 +61,11 @@ class Ingreso_pagos : AppCompatActivity() {
         val addCategoryButton = findViewById<Button>(R.id.add_category)
         addCategoryButton.setOnClickListener {
             showAddCategoryDialog()
+        }
+
+        val removeCategoryButton = findViewById<Button>(R.id.remove_category)
+        removeCategoryButton.setOnClickListener {
+            showAddCategoryDialog_remove()
         }
 
         btn_addpago.setOnClickListener {
@@ -125,7 +130,81 @@ class Ingreso_pagos : AppCompatActivity() {
         }
     }
 
+    private fun addCategory(categoryName: String) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.uid?.let { uid ->
+            val dbReference = FirebaseDatabase.getInstance().getReference("USUARIO").child(uid).child("CATEGORIAS")
+            val newCategoryRef = dbReference.push()
+            newCategoryRef.setValue(categoryName).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Categoría añadida correctamente", Toast.LENGTH_SHORT).show()
+                    consultarCategorias() // Recargar categorías
+                } else {
+                    Toast.makeText(this, "Error al añadir la categoría", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
+    private fun consultarCategorias() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.uid?.let { uid ->
+            val dbReference = FirebaseDatabase.getInstance().getReference("USUARIO").child(uid).child("CATEGORIAS")
+
+            dbReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    categories.clear()
+                    if (snapshot.exists()) {
+                        for (categorySnapshot in snapshot.children) {
+                            val category = categorySnapshot.getValue(String::class.java)
+                            category?.let { categories.add(it) }
+                        }
+                        updateCategoryAdapter()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error al cargar categorías: ${error.message}")
+                }
+            })
+        }
+    }
+
+    private fun eliminarCategoria(categoryName: String) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.uid?.let { uid ->
+            val dbReference = FirebaseDatabase.getInstance().getReference("USUARIO").child(uid).child("CATEGORIAS")
+
+            dbReference.orderByValue().equalTo(categoryName).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) { // Check if any category exists with the given name
+                        for (categorySnapshot in snapshot.children) {
+                            categorySnapshot.ref.removeValue().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(this@Ingreso_pagos, "Categoría eliminada correctamente", Toast.LENGTH_SHORT).show()
+                                    categories.remove(categoryName)
+                                    updateCategoryAdapter()
+                                } else {
+                                    Toast.makeText(this@Ingreso_pagos, "Error al eliminar la categoría", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(this@Ingreso_pagos, "Categoría no encontrada", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error al eliminar categoría: ${error.message}")
+                }
+            })
+        }
+    }
+    private fun updateCategoryAdapter() {
+        val autoCompleteTextView = findViewById<MaterialAutoCompleteTextView>(R.id.autoCompleteTextView)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        autoCompleteTextView.setAdapter(adapter)
+    }
 
     private fun showAddCategoryDialog() {
         val builder = AlertDialog.Builder(this)
@@ -137,10 +216,36 @@ class Ingreso_pagos : AppCompatActivity() {
         builder.setPositiveButton("Agregar") { dialog, _ ->
             val categoryName = input.text.toString().trim()
             if (categoryName.isNotEmpty()) {
-                categories.add(categoryName)
-                // Aquí puedes actualizar tu UI con las nuevas categorías
+                addCategory(categoryName)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "El nombre de la categoría a eliminar no puede estar vacío", Toast.LENGTH_SHORT).show()
             }
-            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        builder.show()
+    }
+
+
+    private fun showAddCategoryDialog_remove() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Eliminar Categoría")
+
+        val input = EditText(this)
+        builder.setView(input)
+
+        builder.setPositiveButton("Eliminar") { dialog, _ ->
+            val categoryName = input.text.toString().trim()
+            if (categoryName.isNotEmpty()) {
+                eliminarCategoria(categoryName)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "El nombre de la categoría no puede estar vacío", Toast.LENGTH_SHORT).show()
+            }
         }
 
         builder.setNegativeButton("Cancelar") { dialog, _ ->
