@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">app_financiera</string>
+    <string name="title_home">Home</string>
+    <string name="title_egresos">Egresos</string>
+    <string name="title_ahorros">Ahorros</string>
+    <string name="title_ingresos">Ingresos</string>
+    <string name="value_ingresos">230</string>
+    <string name="value_egresos">15</string>
+    <string name="value_ahorros">20</string>
+    <string name="simbol_pesos">$</string>
+</resources>

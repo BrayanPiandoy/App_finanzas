@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home"
+        />
+
+    <item
+        android:id="@+id/navigation_egresos"
+        android:icon="@drawable/recibo"
+        android:title="@string/title_egresos" />
+
+    <item
+        android:id="@+id/navigation_ingresos"
+        android:icon="@drawable/alt_de_ingresos"
+        android:title="@string/title_ingresos" />
+
+    <item
+        android:id="@+id/navigation_ahorros"
+        android:icon="@drawable/hucha"
+        android:title="@string/title_ahorros" />
+
+</menu>

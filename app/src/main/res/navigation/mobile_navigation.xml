@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.navegacion.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_egresos"
+        android:name="com.example.navegacion.ui.egresos.EgresosFragment"
+        android:label="@string/title_egresos"
+        tools:layout="@layout/fragment_egresos"/>
+
+    <fragment
+        android:id="@+id/navigation_ingresos"
+        android:name="com.example.navegacion.ui.ingresos.IngresosFragment"
+        android:label="@string/title_ingresos"
+        tools:layout="@layout/fragment_ingresos"/>
+
+    <fragment
+        android:id="@+id/navigation_ahorros"
+        android:name="com.example.navegacion.ui.ahorros.AhorrosFragment"
+        android:label="@string/title_ahorros"
+        tools:layout="@layout/fragment_ahorros" />
+</navigation>
