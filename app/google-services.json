@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "844487783549",
+    "firebase_url": "https://flash-yen-411104-default-rtdb.firebaseio.com",
+    "project_id": "flash-yen-411104",
+    "storage_bucket": "flash-yen-411104.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844487783549:android:b118d5e729d941b5b2ad14",
+        "android_client_info": {
+          "package_name": "com.example.navegacion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHkl84Tu-7Pdu61QgUph4o-MwcnPA3hQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
