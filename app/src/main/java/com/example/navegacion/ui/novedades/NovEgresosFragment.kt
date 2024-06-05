@@ -1,60 +1,141 @@
 package com.example.navegacion.ui.novedades
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.navegacion.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NovEgresosFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NovEgresosFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private val categorias = listOf("Alimentación", "Transporte", "Educación", "Entretenimiento", "Salud", "Compras", "Otros")
+
+    private lateinit var etValor: EditText
+    private lateinit var sCategorias: Spinner
+    private lateinit var etNombre: EditText
+    private lateinit var etDescripcion: EditText
+    private lateinit var btNuevo: Button
+    private lateinit var database: FirebaseDatabase
+    private lateinit var auth: FirebaseAuth
+    private var listener: OnSavedListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        database = FirebaseDatabase.getInstance()
+        auth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nov_egresos, container, false)
+        val view = inflater.inflate(R.layout.fragment_nov_egresos, container, false)
+
+        etValor = view.findViewById(R.id.etValor)
+        sCategorias = view.findViewById(R.id.sCategorias)
+        etNombre = view.findViewById(R.id.etNombre)
+        etDescripcion = view.findViewById(R.id.etDescripcion)
+        btNuevo = view.findViewById(R.id.btNuevo)
+
+        // Formatear el número con puntos como separadores de miles
+        etValor.addTextChangedListener(object : TextWatcher {
+            private val decimalFormat = DecimalFormat("#,###.##")
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Eliminar el listener para evitar ciclos infinitos al actualizar el texto
+                etValor.removeTextChangedListener(this)
+
+                // Formatear el número con puntos para los miles
+                val parsed = s.toString().replace("[^\\d]".toRegex(), "").toDoubleOrNull() ?: 0.0
+                val formatted = decimalFormat.format(parsed)
+                etValor.setText(formatted)
+                etValor.setSelection(formatted.length)
+
+                // Restaurar el listener
+                etValor.addTextChangedListener(this)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Crea un adaptador para el Spinner
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categorias)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        sCategorias.adapter = adapter
+
+        // Verifica si el parentFragment implementa OnEgresoSavedListener
+        if (parentFragment is OnSavedListener) {
+            listener = parentFragment as OnSavedListener
+        }
+
+        btNuevo.setOnClickListener {
+            saveEgreso()
+        }
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NovEgresosFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NovEgresosFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun saveEgreso() {
+        val valor = etValor.text.toString().trim()
+        val categoria = sCategorias.selectedItem.toString().trim()
+        val nombre = etNombre.text.toString().trim()
+        val descripcion = etDescripcion.text.toString().trim()
+
+        if (valor.isEmpty() || categoria.isEmpty() || nombre.isEmpty() || descripcion.isEmpty()) {
+            Toast.makeText(context, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val egresoRef = database.getReference("users").child(uid).child("egresos").push()
+
+            val currentDate = getCurrentDate()
+            val egresoData = hashMapOf(
+                "valor" to valor,
+                "categoria" to categoria,
+                "nombre" to nombre,
+                "descripcion" to descripcion,
+                "fecha" to currentDate
+            )
+
+            egresoRef.setValue(egresoData)
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Egreso guardado con éxito", Toast.LENGTH_SHORT).show()
+                    clearFields()
+                    listener?.onSaved() // Notifica al listener
                 }
-            }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error al guardar el egreso: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    private fun clearFields() {
+        etValor.text.clear()
+        etNombre.text.clear()
+        etDescripcion.text.clear()
+        sCategorias.setSelection(0)
     }
 }

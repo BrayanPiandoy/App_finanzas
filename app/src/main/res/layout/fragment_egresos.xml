@@ -53,14 +53,14 @@
         app:layout_constraintTop_toBottomOf="@id/banner">
 
         <Spinner
-            android:id="@+id/spinner_categories"
+            android:id="@+id/sCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="Categorias: "
             android:background="@drawable/categories_button_style"
-            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:paddingTop="5dp"
-            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
             android:paddingBottom="5dp"
             android:prompt="@string/app_name"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,56 +69,66 @@
         </Spinner>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contend_pagos"
-            android:layout_width="0dp"
+        <ListView
+            android:id="@+id/lvEgresos"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/categories_button_style"
-            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:paddingTop="20dp"
-            app:layout_constraintBottom_toTopOf="@id/tv_total_payments"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarStyle="insideInset"
+            app:layout_constraintBottom_toTopOf="@id/llTotal"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner_categories">
-
-            <TextView
-                android:id="@+id/tv_categorias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="aaaaa"
-                android:textColor="#615E5E"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sCategories"
+            app:layout_constraintVertical_bias="0.222">
 
 
-                >
+        </ListView>
 
-            </TextView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tv_total_payments"
+        <LinearLayout
+            android:id="@+id/llTotal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/categories_button_style"
-            android:paddingStart="30dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="Total pagos:"
-            android:textColor="@color/black"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
-            >
-
-        </TextView>
-
+            app:layout_constraintTop_toBottomOf="@+id/lvIngresos"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/categories_button_style"
+                android:paddingEnd="30dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:gravity="start"
+                android:text="Total egresos:"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:id="@+id/tv_total_payments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/categories_button_style"
+                android:text="No tienes egresos"
+                android:gravity="end"
+                android:paddingEnd="30dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

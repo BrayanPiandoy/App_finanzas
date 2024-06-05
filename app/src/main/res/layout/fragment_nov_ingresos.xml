@@ -6,53 +6,76 @@
     android:background="@color/color_icons"
     android:orientation="vertical"
     tools:context=".ui.novedades.NovIngresosFragment">
-
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
         android:layout_weight="1"
+        android:gravity="center"
+        android:text="Nuevo Ingresos"
+        android:autoSizeTextType="uniform"
+        android:textStyle="bold"
+        android:textColor="@color/background_app"/>
+
+    <EditText
+        android:id="@+id/etValor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginTop="5dp"
         android:background="@drawable/noveda"
         android:gravity="end|center_vertical"
-        android:hint="$0000000"
-        android:inputType="number"
-        android:paddingStart="10dp" />
+        android:hint="1.000.000"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:drawableStart="@drawable/dollar_icon"
+        android:drawablePadding="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginStart="20dp" />
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:autofillHints="Categorias"
         android:background="@drawable/noveda2"
-        android:gravity="start|center_vertical" />
+        android:gravity="start|center_vertical"
+        android:layout_marginEnd="20dp"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:background="@drawable/noveda2"
         android:gravity="start|center_vertical"
         android:hint="Nombre"
         android:inputType="text"
-        android:paddingEnd="10dp" />
+        android:layout_marginEnd="20dp" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:background="@drawable/noveda2"
         android:gravity="start|center_vertical"
         android:hint="Descripción"
         android:inputType="text"
-        android:paddingEnd="10dp" />
-
-    <Space
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp" />
+    <Button
+        android:id="@+id/btNuevo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
-
+        android:layout_weight="1"
+        android:text="Crear"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/categories_button_style3"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp"/>
 
 </LinearLayout>

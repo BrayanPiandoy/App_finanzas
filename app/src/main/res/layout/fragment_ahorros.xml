@@ -4,39 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ahorros.AhorrosFragment"
-    android:background="@color/background_app">
+    android:background="@color/background_app"
+    tools:context=".ui.ahorros.AhorrosFragment">
 
 
     <LinearLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:orientation="vertical"
         android:background="@drawable/curved_banner"
+        android:orientation="vertical"
         tools:ignore="MissingConstraints">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="10dp"
-            >
+            android:padding="10dp">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/title_ahorros"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="@string/title_ahorros"
                 android:textColor="@color/black"
-                android:textSize="30dp"/>
+                android:textSize="30dp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:src="@drawable/hucha"/>
+                android:src="@drawable/hucha" />
         </LinearLayout>
 
     </LinearLayout>
@@ -45,8 +46,8 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="10dp"
         android:paddingStart="10dp"
+        android:paddingTop="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -56,7 +57,7 @@
 
 
         <Spinner
-            android:id="@+id/spinner_categories"
+            android:id="@+id/sCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="Categorias: "
@@ -71,55 +72,67 @@
 
         </Spinner>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contend_pagos"
-            android:layout_width="0dp"
+        <ListView
+            android:id="@+id/lvAhorros"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/categories_button_style3"
             android:paddingStart="20dp"
             android:paddingTop="20dp"
-            app:layout_constraintBottom_toTopOf="@id/tv_total_payments"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarStyle="insideInset"
+            app:layout_constraintBottom_toTopOf="@id/llTotal"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner_categories">
-
-            <TextView
-                android:id="@+id/tv_categorias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="aaaaa"
-                android:textColor="#615E5E"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sCategories"
+            app:layout_constraintVertical_bias="0.222">
 
 
-                >
+        </ListView>
 
-            </TextView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tv_total_payments"
+        <LinearLayout
+            android:id="@+id/llTotal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@drawable/categories_button_style3"
-            android:paddingStart="30dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="Total pagos:"
-            android:textColor="@color/black"
-            android:textStyle="bold"
+            android:drawableStart="@drawable/alt_de_ingresos"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lvIngresos">
 
-            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/categories_button_style3"
+                android:gravity="start"
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Total ahorros:"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
-        </TextView>
+            <TextView
+                android:id="@+id/tv_total_payments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/categories_button_style3"
+                android:gravity="end"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="10dp"
+                android:text="No tienes ahorros"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

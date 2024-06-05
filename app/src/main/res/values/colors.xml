@@ -21,4 +21,26 @@
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
 
+
+
+    <color name="categoria1">#FF6347</color> (Tomate)
+    <color name="categoria2">#FF7F50</color> (Coral claro)
+    <color name="categoria3">#FFA07A</color> (Salmón claro)
+    <color name="categoria4">#FFB6C1</color> (Rosa claro)
+    <color name="categoria5">#FFC0CB</color> (Rosa almendra)
+    <color name="categoria6">#FFD700</color> (Oro)
+    <color name="categoria7">#FFDAB9</color> (Melocotón)
+    <color name="categoria8">#FFDEAD</color> (Almendra)
+    <color name="categoria9">#FFE4B5</color> (Almendra claro)
+    <color name="categoria10">#FFE4C4</color> (Blanquecino)
+    <color name="categoria11">#FFE4E1</color> (Rosa lino)
+    <color name="categoria12">#FFEBCD</color> (Blanco almendra)
+    <color name="categoria13">#FFEFD5</color> (Papaya whip)
+    <color name="categoria14">#FFF0F5</color> (Lavanda rosada)
+    <color name="categoria15">#FFF5EE</color> (Blanco antiguo)
+    <color name="categoria16">#FFF8DC</color> (Maíz seda)
+    <color name="categoria17">#FFFACD</color> (Lima almendra)
+    <color name="categoria18">#FFFAF0</color> (Blanco floral)
+    <color name="categoria19">#FFFAFA</color> (Blanco nieve)
+    <color name="categoria20">#FFFF00</color> (Amarillo)
 </resources>

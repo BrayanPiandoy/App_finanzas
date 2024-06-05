@@ -9,15 +9,17 @@
     tools:context=".ui.users.RegisterActivity">
 
 
+
     <ImageButton
         android:id="@+id/btn_Return"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="center"
+        android:scaleX="2"
+        android:scaleY="2"
         android:layout_margin="10dp"
-        android:layout_weight="1"
         android:background="@color/color_icons"
-        android:src="@drawable/icon_return" />
-
+        android:src="@drawable/ic_home_black_24dp" />
 
     <LinearLayout
         android:id="@+id/Return"
@@ -70,13 +72,14 @@
             android:textSize="15dp" />
 
         <EditText
-            android:id="@+id/etUser"
+            android:id="@+id/etMail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/edittext_border"
-            android:inputType="textEmailAddress" />
-        android:gravity="center_vertical"
+            android:inputType="textEmailAddress"
+            android:gravity="center_vertical"/>
+
 
         <TextView
             android:id="@+id/tvPassword"
@@ -115,4 +118,5 @@
 
 
     </LinearLayout>
+
 </LinearLayout>

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -51,8 +52,12 @@ dependencies {
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.database.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }
