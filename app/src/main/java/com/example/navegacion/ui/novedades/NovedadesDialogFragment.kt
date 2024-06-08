@@ -28,10 +28,10 @@ class NovedadesDialogFragment : DialogFragment(), OnSavedListener  {
         }
 
         val viewPager: ViewPager2 = view.findViewById(R.id.viewPager)
-        val adapter = MyFragmentStateAdapter(this)
+
         val tabLayout: TabLayout = view.findViewById(R.id.tabLayout)
         val tabTitles = listOf("Egresos", "Ingresos", "Ahorros")
-        viewPager.adapter = adapter
+
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabTitles[position]

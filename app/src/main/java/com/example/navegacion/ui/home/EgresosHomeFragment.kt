@@ -5,56 +5,67 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [EgresosHomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EgresosHomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: FirebaseDatabase
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var egresoAdapter: EgresoAdapter
+    private val egresosList = mutableListOf<Egreso>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_egresos_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_egresos_home, container, false)
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+
+        recyclerView = view.findViewById(R.id.recyclerViewEgresos)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        egresoAdapter = EgresoAdapter(egresosList)
+        recyclerView.adapter = egresoAdapter
+
+        loadEgresos()
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EgresosHomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EgresosHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun loadEgresos() {
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val egresosRef = database.getReference("users").child(uid).child("egresos")
+
+            egresosRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    egresosList.clear()
+                    for (egresoSnapshot in snapshot.children) {
+                        val egreso = egresoSnapshot.getValue(Egreso::class.java)
+                        if (egreso != null) {
+                            egresosList.add(egreso)
+                        }
+                    }
+                    egresoAdapter.notifyDataSetChanged()
                 }
-            }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                }
+            })
+        }
     }
+    data class Egreso(
+        val valor: String = "",
+        val categoria: String = "",
+        val nombre: String = "",
+        val descripcion: String = "",
+        val fecha: String = ""
+    )
 }

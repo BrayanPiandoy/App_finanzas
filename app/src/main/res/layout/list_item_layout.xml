@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="50dp"
     android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-
+            android:layout_weight="0.7"
             >
 
             <TextView
@@ -16,7 +15,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text=""
+                android:gravity="center_vertical|start"
+                android:autoSizeMaxTextSize="24dp"
+                android:autoSizeMinTextSize="5dp"
                 android:autoSizeTextType="uniform"/>
 
             <TextView
@@ -25,25 +26,29 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text=""
-                android:gravity="end"
+                android:gravity="center_vertical|start"
+                android:autoSizeMaxTextSize="24dp"
+                android:autoSizeMinTextSize="5dp"
                 android:autoSizeTextType="uniform"/>
 
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             >
 
 
             <TextView
-                android:id="@+id/tvLvDescripcion"
+                android:id="@+id/tvLvCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text=""
+                android:gravity="center_vertical|start"
+                android:autoSizeMaxTextSize="24dp"
+                android:autoSizeMinTextSize="5dp"
                 android:autoSizeTextType="uniform"
-                android:textColor="@color/color_icons"
+                android:textColor="@color/color_icons_selected"
                 />
 
                 <TextView
@@ -52,11 +57,28 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text=""
-                    android:gravity="start"
+                    android:gravity="center_vertical|start"
+                    android:autoSizeMaxTextSize="24dp"
+                    android:autoSizeMinTextSize="5dp"
                     android:autoSizeTextType="uniform"
-                    android:textColor="@color/color_icons"
+                    android:textColor="@color/color_icons_selected"
                     />
 
         </LinearLayout>
+    <TextView
+        android:id="@+id/tvLvDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical|start"
+        android:autoSizeMaxTextSize="24dp"
+        android:autoSizeMinTextSize="5dp"
+        android:autoSizeTextType="uniform"
+        android:textColor="@color/color_icons"
+        />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:dividerColor="@color/color_icons"/>
 
 </LinearLayout>

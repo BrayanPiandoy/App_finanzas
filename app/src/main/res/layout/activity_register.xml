@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -91,19 +92,78 @@
             android:textSize="15dp" />
 
 
-        <EditText
-            android:id="@+id/etPassword"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llPassword"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/edittext_border"
-            android:gravity="center_vertical"
-            android:inputType="text" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <Space
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:drawableTint="@color/black"/>
+
+            <ImageButton
+                android:id="@+id/btnShowPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_disabled_visible_24"
+                android:background="@drawable/edittext_border"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/etPassword"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/black" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvPassword2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Verificar Contraseña"
+            android:textSize="15dp" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ll2Password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/etPassword2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:drawableTint="@color/black"/>
+
+            <ImageButton
+                android:id="@+id/btnShowPassword2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_disabled_visible_24"
+                android:background="@drawable/edittext_border"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/etPassword2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/black" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <Button
             android:id="@+id/btn_registro"
@@ -111,6 +171,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_marginTop="10dp"
             android:backgroundTint="#2D8BBA"
             android:gravity="center"
             android:text="Registrar"

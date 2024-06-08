@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
-import com.example.navegacion.databinding.FragmentEgresosBinding
-import com.example.navegacion.ui.egresos.CustomListAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,10 +22,12 @@ import java.util.Locale
 
 class EgresosFragment : Fragment() {
     private lateinit var sCategories: Spinner
-    private lateinit var lvEgresos: ListView
+    private lateinit var rvEgresos: RecyclerView
     private lateinit var tvTotalPayments: TextView
     private lateinit var database: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
+    private lateinit var adapter: EgresosAdapter
+    private var egresosList= mutableListOf<Egresos>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,20 +42,42 @@ class EgresosFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_egresos, container, false)
 
         sCategories = view.findViewById(R.id.sCategories)
-        lvEgresos = view.findViewById(R.id.lvEgresos)
+        rvEgresos = view.findViewById(R.id.lvEgresos)
         tvTotalPayments = view.findViewById(R.id.tv_total_payments)
 
-        val categorias = listOf("Todos",
-            "Alimentación", "Transporte", "Educación", "Entretenimiento", "Salud", "Compras", "Otros"
-        )
-
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categorias)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        sCategories.adapter = adapter
-
+        fetchCategories()
         fetchEgresos()
 
         return view
+    }
+
+    private fun fetchCategories() {
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val categoriasRef = database.getReference("users").child(uid).child("categorias").child("egresos")
+
+            categoriasRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val categoriasList = mutableListOf<String>()
+
+                    for (categoriaSnapshot in dataSnapshot.children) {
+                        val categoria = categoriaSnapshot.getValue(String::class.java)
+                        categoria?.let {
+                            categoriasList.add(it)
+                        }
+                    }
+
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoriasList)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    sCategories.adapter = adapter
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("EgresosFragment", "Error fetching categories: ${databaseError.message}")
+                }
+            })
+        }
     }
 
     private fun fetchEgresos() {
@@ -64,47 +86,25 @@ class EgresosFragment : Fragment() {
             val uid = user.uid
             val egresosRef = database.getReference("users").child(uid).child("egresos")
 
-            val colors = mapOf(
-                "Todos" to R.color.categoria20,
-                "Alimentación" to R.color.categoria1,
-                "Transporte" to R.color.categoria2,
-                "Educación" to R.color.categoria3,
-                "Entretenimiento" to R.color.categoria4,
-                "Salud" to R.color.categoria5,
-                "Compras" to R.color.categoria6,
-                "Otros" to R.color.categoria7
-                // Agrega más categorías aquí con sus respectivos colores
-            )
-
             egresosRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val egresosList = mutableListOf<String>()
+                    egresosList
                     var totalEgresos = 0.0
 
                     for (egresosSnapshot in snapshot.children) {
                         val egresos = egresosSnapshot.getValue(Egresos::class.java)
                         if (egresos != null) {
-                            val egresosString = """
-                            Nombre: ${egresos.nombre}
-                            Categoría: ${egresos.categoria}
-                            Valor: ${egresos.valor}
-                            Descripción: ${egresos.descripcion}
-                            Fecha: ${egresos.fecha}
-                        """.trimIndent()
-                            egresosList.add(egresosString)
+
+                            egresosList.add(egresos)
 
                             // Eliminar comas antes de convertir a double
                             val valorSinComas = egresos.valor.replace(",", "")
                             totalEgresos += valorSinComas.toDouble()
-                        } else {
-                            Log.e("EgresosFragment", "Egreso is null for snapshot: $egresosSnapshot")
                         }
                     }
-                    // Dentro del método fetchIngresos() en tu fragmento IngresosFragment
-                    val adapter = CustomListAdapter(requireContext(), R.layout.list_item_layout, egresosList, colors)
-                    lvEgresos.adapter = adapter
 
-                    // Formatear el total de ingresos
+                    setupRecyclerView()
+
                     val numberFormat = NumberFormat.getNumberInstance(Locale.US)
                     tvTotalPayments.text = numberFormat.format(totalEgresos)
                 }
@@ -115,9 +115,13 @@ class EgresosFragment : Fragment() {
             })
 
         }
-
     }
 
+    private fun setupRecyclerView() {
+        adapter = EgresosAdapter(egresosList)
+        rvEgresos.layoutManager = LinearLayoutManager(requireContext())
+        rvEgresos.adapter = adapter
+    }
     data class Egresos(
         val valor: String = "",
         val categoria: String = "",
@@ -125,6 +129,4 @@ class EgresosFragment : Fragment() {
         val descripcion: String = "",
         val fecha: String = ""
     )
-
-
 }

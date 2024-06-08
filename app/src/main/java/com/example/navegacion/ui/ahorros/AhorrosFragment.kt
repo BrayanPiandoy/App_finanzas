@@ -1,17 +1,19 @@
 package com.example.navegacion.ui.ahorros
 
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
-import com.example.navegacion.ui.ahorros.CustomListAdapter
+import com.example.navegacion.ui.ingresos.IngresosAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,10 +25,12 @@ import java.util.Locale
 class AhorrosFragment : Fragment() {
 
     private lateinit var sCategories: Spinner
-    private lateinit var lvAhorros: ListView
+    private lateinit var rvEgresos: RecyclerView
     private lateinit var tvTotalPayments: TextView
     private lateinit var database: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
+    private lateinit var adapter: AhorrosAdapter
+    private var egresosList= mutableListOf<Ahorros>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,82 +45,86 @@ class AhorrosFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_ahorros, container, false)
 
         sCategories = view.findViewById(R.id.sCategories)
-        lvAhorros = view.findViewById(R.id.lvAhorros)
+        rvEgresos = view.findViewById(R.id.rvAhorros)
         tvTotalPayments = view.findViewById(R.id.tv_total_payments)
 
-        val categorias = listOf("Todos",
-            "Cuenta de ahorros", "Fondos de inversión", "Plan de pensiones", "Cuenta de jubilación", "Inversiones a largo plazo", "Inversiones a corto plazo", "Otros"
-        )
-
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categorias)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        sCategories.adapter = adapter
-
-        fetchAhorros()
+        fetchCategories()
+        fetchEgresos()
 
         return view
     }
 
-    private fun fetchAhorros() {
+    private fun fetchCategories() {
         val user = auth.currentUser
         if (user != null) {
             val uid = user.uid
-            val ahorrosRef = database.getReference("users").child(uid).child("ahorros")
+            val categoriasRef = database.getReference("users").child(uid).child("categorias").child("ahorros")
 
-            val colors = mapOf(
-                "Todos" to R.color.categoria20,
-                "Cuenta de ahorros" to R.color.categoria1,
-                "Fondos de inversión" to R.color.categoria2,
-                "Plan de pensiones" to R.color.categoria3,
-                "Cuenta de jubilación" to R.color.categoria4,
-                "Inversiones a largo plazo" to R.color.categoria5,
-                "Inversiones a corto plazo" to R.color.categoria6,
-                "Otros" to R.color.categoria7
-                // Agrega más categorías aquí con sus respectivos colores
-            )
+            categoriasRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val categoriasList = mutableListOf<String>()
 
-            ahorrosRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val ahorrosList = mutableListOf<String>()
-                    var totalAhorros = 0.0
-
-                    for (ahorrosSnapshot in snapshot.children) {
-                        val ahorros = ahorrosSnapshot.getValue(Ahorros::class.java)
-                        if (ahorros != null) {
-                            val ahorrosString = """
-                            Nombre: ${ahorros.nombre}
-                            Categoría: ${ahorros.categoria}
-                            Valor: ${ahorros.valor}
-                            Descripción: ${ahorros.descripcion}
-                            Fecha: ${ahorros.fecha}
-                        """.trimIndent()
-                            ahorrosList.add(ahorrosString)
-
-                            // Eliminar comas antes de convertir a double
-                            val valorSinComas = ahorros.valor.replace(",", "")
-                            totalAhorros += valorSinComas.toDouble()
-                        } else {
-                            Log.e("EgresosFragment", "Egreso is null for snapshot: $ahorrosSnapshot")
+                    for (categoriaSnapshot in dataSnapshot.children) {
+                        val categoria = categoriaSnapshot.getValue(String::class.java)
+                        categoria?.let {
+                            categoriasList.add(it)
                         }
                     }
-                    // Dentro del método fetchIngresos() en tu fragmento IngresosFragment
-                    val adapter = CustomListAdapter(requireContext(), R.layout.list_item_layout, ahorrosList, colors)
-                    lvAhorros.adapter = adapter
 
-                    // Formatear el total de ingresos
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoriasList)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    sCategories.adapter = adapter
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("AhorrosFragment", "Error fetching categories: ${databaseError.message}")
+                }
+            })
+        }
+    }
+
+    private fun fetchEgresos() {
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val egresosRef = database.getReference("users").child(uid).child("ahorros")
+
+            egresosRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    egresosList
+                    var totalEgresos = 0.0
+
+                    for (egresosSnapshot in snapshot.children) {
+                        val egresos = egresosSnapshot.getValue(Ahorros::class.java)
+                        if (egresos != null) {
+
+                            egresosList.add(egresos)
+
+                            // Eliminar comas antes de convertir a double
+                            val valorSinComas = egresos.valor.replace(",", "")
+                            totalEgresos += valorSinComas.toDouble()
+                        }
+                    }
+
+                    setupRecyclerView()
+
                     val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-                    tvTotalPayments.text = numberFormat.format(totalAhorros)
+                    tvTotalPayments.text = numberFormat.format(totalEgresos)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("EgresosFragment", "Database error: ${error.message}")
+                    Log.e("AhorrosFragment", "Database error: ${error.message}")
                 }
             })
 
         }
-
     }
 
+    private fun setupRecyclerView() {
+        adapter = AhorrosAdapter(egresosList)
+        rvEgresos.layoutManager = LinearLayoutManager(requireContext())
+        rvEgresos.adapter = adapter
+    }
     data class Ahorros(
         val valor: String = "",
         val categoria: String = "",
@@ -124,6 +132,4 @@ class AhorrosFragment : Fragment() {
         val descripcion: String = "",
         val fecha: String = ""
     )
-
-
 }

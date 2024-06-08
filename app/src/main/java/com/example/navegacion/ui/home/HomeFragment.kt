@@ -1,7 +1,5 @@
 package com.example.navegacion.ui.home
 
-import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,23 +10,28 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.viewpager2.widget.ViewPager2
 import com.example.navegacion.R
-import com.example.navegacion.ui.novedades.MyFragmentStateAdapter
 import com.example.navegacion.ui.users.LoginActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+
 class HomeFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
+    private lateinit var pieChart: PieChart
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,9 +46,10 @@ class HomeFragment : Fragment() {
         }
 
         updateUser(root)
+        setupPieChart(root)
 
         val viewPager: ViewPager2 = root.findViewById(R.id.viewPager)
-        val adapter = com.example.navegacion.ui.home.MyFragmentStateAdapter(this)
+        val adapter = MyFragmentStateAdapter(this)
         val tabLayout: TabLayout = root.findViewById(R.id.tabLayout)
         val tabTitles = listOf("Egresos", "Ingresos", "Ahorros")
         viewPager.adapter = adapter
@@ -81,6 +85,88 @@ class HomeFragment : Fragment() {
         } else {
             textView.text = "No identificado"
         }
+    }
+
+    private fun setupPieChart(view: View) {
+        pieChart = view.findViewById(R.id.pieChart)
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val entries = ArrayList<PieEntry>()
+
+            val egresosRef = database.getReference("users").child(uid).child("egresos")
+            egresosRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var totalEgresos = 0.0
+                    for (egresosSnapshot in snapshot.children) {
+                        val valor = egresosSnapshot.child("valor").getValue(String::class.java)
+                        valor?.let {
+                            val valorSinComas = it.replace(",", "")
+                            totalEgresos += valorSinComas.toDouble()
+                        }
+                    }
+                    entries.add(PieEntry(totalEgresos.toFloat(), "Egresos"))
+                    updatePieChart(entries)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejar error
+                }
+            })
+
+            val ingresosRef = database.getReference("users").child(uid).child("ingresos")
+            ingresosRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var totalIngresos = 0.0
+                    for (ingresosSnapshot in snapshot.children) {
+                        val valor = ingresosSnapshot.child("valor").getValue(String::class.java)
+                        valor?.let {
+                            val valorSinComas = it.replace(",", "")
+                            totalIngresos += valorSinComas.toDouble()
+                        }
+                    }
+                    entries.add(PieEntry(totalIngresos.toFloat(), "Ingresos"))
+                    updatePieChart(entries)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejar error
+                }
+            })
+
+            val ahorrosRef = database.getReference("users").child(uid).child("ahorros")
+            ahorrosRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var totalAhorros = 0.0
+                    for (ahorrosSnapshot in snapshot.children) {
+                        val valor = ahorrosSnapshot.child("valor").getValue(String::class.java)
+                        valor?.let {
+                            val valorSinComas = it.replace(",", "")
+                            totalAhorros += valorSinComas.toDouble()
+                        }
+                    }
+                    entries.add(PieEntry(totalAhorros.toFloat(), "Ahorros"))
+                    updatePieChart(entries)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejar error
+                }
+            })
+        }
+    }
+
+    private fun updatePieChart(entries: List<PieEntry>) {
+        val dataSet = PieDataSet(entries, "")
+        val data = PieData(dataSet)
+        val colors = listOf(
+            ColorTemplate.rgb("#FF6384"),  // Rojo
+            ColorTemplate.rgb("#36A2EB"),  // Azul
+            ColorTemplate.rgb("#FFCE56")   // Amarillo
+        )
+        dataSet.colors = colors
+        pieChart.data = data
+        pieChart.invalidate() // refresh
     }
 
     private fun showUserOptions() {

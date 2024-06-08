@@ -14,7 +14,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.navegacion.databinding.ActivityMainBinding
+import com.example.navegacion.ui.novedades.NovedadesActivity
 import com.example.navegacion.ui.novedades.NovedadesDialogFragment
+import com.example.navegacion.ui.users.LoginActivity
 import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
@@ -79,9 +81,8 @@ class MainActivity : AppCompatActivity() {
         })
 
         btFlotante.setOnClickListener {
-            navController.navigate(R.id.navigation_home)
-            val novedadesDialog = NovedadesDialogFragment()
-            novedadesDialog.show(supportFragmentManager, "NovedadesDialog")
+            val intent = Intent(this, NovedadesActivity::class.java)
+            startActivity(intent)
 
         }
     }

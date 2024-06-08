@@ -16,13 +16,15 @@
             android:layout_weight="5"
             android:text="ULTIMOS EGRESOS"
             android:textColor="@color/black"
-            android:textSize="24dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="24dp"
             />
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewEgresos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"

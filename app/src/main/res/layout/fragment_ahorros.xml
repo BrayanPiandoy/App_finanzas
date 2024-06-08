@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -55,12 +56,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/banner">
 
-
         <Spinner
             android:id="@+id/sCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints="Categorias: "
             android:background="@drawable/categories_button_style3"
             android:paddingStart="30dp"
             android:paddingTop="5dp"
@@ -72,26 +71,25 @@
 
         </Spinner>
 
-        <ListView
-            android:id="@+id/lvAhorros"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAhorros"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/categories_button_style3"
-            android:paddingStart="20dp"
-            android:paddingTop="20dp"
+            android:padding="20dp"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:scrollbarStyle="insideInset"
+            android:outlineAmbientShadowColor="@color/black"
+            android:outlineSpotShadowColor="@color/black"
             app:layout_constraintBottom_toTopOf="@id/llTotal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sCategories"
-            app:layout_constraintVertical_bias="0.222">
-
-
-        </ListView>
+            app:layout_constraintTop_toBottomOf="@id/sCategories">
+        </androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/llTotal"
@@ -104,7 +102,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lvIngresos">
+            app:layout_constraintTop_toBottomOf="@+id/rvAhorros">
 
             <TextView
                 android:layout_width="match_parent"
@@ -124,12 +122,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/categories_button_style3"
+                android:background="@drawable/categories_button_style"
                 android:gravity="end"
                 android:paddingTop="10dp"
                 android:paddingEnd="30dp"
                 android:paddingBottom="10dp"
-                android:text="No tienes ahorros"
+                android:text="No tienes egresos"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>

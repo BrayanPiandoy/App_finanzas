@@ -8,4 +8,7 @@
     <string name="value_egresos">15</string>
     <string name="value_ahorros">20</string>
     <string name="simbol_pesos">$</string>
+    <string name="total_ahorros">0</string>
+    <string name="total_ingresos">0</string>
+    <string name="total_egresos">0</string>
 </resources>

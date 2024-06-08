@@ -6,7 +6,7 @@ import com.example.navegacion.ui.home.AhorrosHomeFragment
 import com.example.navegacion.ui.home.EgresosHomeFragment
 import com.example.navegacion.ui.home.IngresosHomeFragment
 
-class MyFragmentStateAdapter(activity: NovedadesDialogFragment) : FragmentStateAdapter(activity) {
+class MyFragmentStateAdapter(activity: NovedadesActivity) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int = 3
 
