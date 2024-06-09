@@ -17,6 +17,7 @@ import com.example.navegacion.databinding.ActivityMainBinding
 import com.example.navegacion.ui.novedades.NovedadesActivity
 import com.example.navegacion.ui.novedades.NovedadesDialogFragment
 import com.example.navegacion.ui.users.LoginActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +29,12 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)

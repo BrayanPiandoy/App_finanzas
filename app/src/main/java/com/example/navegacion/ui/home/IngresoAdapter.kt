@@ -1,11 +1,11 @@
-package com.example.navegacion.ui.ingresos
+package com.example.navegacion.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
 
-class IngresosAdapter(val ingresosList: MutableList<IngresosFragment.Ingresos>) : RecyclerView.Adapter<IngresosViewHolder>() {
+class IngresoAdapter(val ingresosList: MutableList<IngresosHomeFragment.Ingreso>) : RecyclerView.Adapter<IngresosViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngresosViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_layout, parent, false)
@@ -19,10 +19,4 @@ class IngresosAdapter(val ingresosList: MutableList<IngresosFragment.Ingresos>) 
 
     override fun getItemCount(): Int =  ingresosList.size
 
-    fun removeItem(position: Int) {
-        ingresosList.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
 }
-

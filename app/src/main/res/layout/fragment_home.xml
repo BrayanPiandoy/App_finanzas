@@ -32,6 +32,7 @@
             android:layout_height="75dp"
             android:gravity="center_vertical"
             android:text="Usuario Ejemplo \n Ejemplo@gmail.com"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/cardView"
             app:layout_constraintStart_toEndOf="@+id/iv_user"
             app:layout_constraintTop_toTopOf="parent" />
@@ -49,48 +50,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_margin="10dp"
-                >
-                <TextView
-                    android:id="@+id/totalIngreso"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="230 \n Ingreso"
-                    android:gravity="center">
 
-                </TextView>
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    />
-                <TextView
-                    android:id="@+id/totalEgreso"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="15 \n Egreso"
-                    android:gravity="center">
-
-                </TextView>
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    />
                 <TextView
                     android:id="@+id/totalAhorro"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="20 \n Ahorro"
+                    android:text="Controla tus finanzas\nControla tu vida"
+                    android:textColor="@color/color_icons_selected"
+                    android:textStyle="italic"
                     android:gravity="center">
 
                 </TextView>
-            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
 

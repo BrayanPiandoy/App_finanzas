@@ -16,7 +16,7 @@
             android:name=".ui.novedades.NovedadesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.users.RegisterActivity"
             android:exported="false" />

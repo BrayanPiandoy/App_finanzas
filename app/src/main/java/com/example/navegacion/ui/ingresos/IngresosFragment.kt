@@ -1,5 +1,6 @@
 package com.example.navegacion.ui.ingresos
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
@@ -26,12 +28,12 @@ import java.util.Locale
 
 class IngresosFragment : Fragment() {
     private lateinit var sCategories: Spinner
-    private lateinit var rvEgresos: RecyclerView
+    private lateinit var rvIngresos: RecyclerView
     private lateinit var tvTotalPayments: TextView
     private lateinit var database: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
     private lateinit var adapter: IngresosAdapter
-    private var egresosList= mutableListOf<Ingresos>()
+    private var ingresosList= mutableListOf<Ingresos>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +48,11 @@ class IngresosFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_ingresos, container, false)
 
         sCategories = view.findViewById(R.id.sCategories)
-        rvEgresos = view.findViewById(R.id.rvIngresos)
+        rvIngresos = view.findViewById(R.id.rvIngresos)
         tvTotalPayments = view.findViewById(R.id.tv_total_payments)
 
         fetchCategories()
-        fetchEgresos()
+        fetchIngresos()
 
         return view
     }
@@ -84,48 +86,123 @@ class IngresosFragment : Fragment() {
         }
     }
 
-    private fun fetchEgresos() {
+    private fun fetchIngresos() {
         val user = auth.currentUser
         if (user != null) {
             val uid = user.uid
-            val egresosRef = database.getReference("users").child(uid).child("ingresos")
+            val ingresosRef = database.getReference("users").child(uid).child("ingresos")
 
-            egresosRef.addValueEventListener(object : ValueEventListener {
+            ingresosRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    egresosList
-                    var totalEgresos = 0.0
+                    ingresosList.clear() // Limpiar la lista antes de agregar nuevos elementos
+                    var totalIngresos = 0.0
 
-                    for (egresosSnapshot in snapshot.children) {
-                        val egresos = egresosSnapshot.getValue(Ingresos::class.java)
-                        if (egresos != null) {
-
-                            egresosList.add(egresos)
+                    for (ingresosSnapshot in snapshot.children) {
+                        val ingresos = ingresosSnapshot.getValue(Ingresos::class.java)
+                        if (ingresos != null) {
+                            ingresosList.add(ingresos)
 
                             // Eliminar comas antes de convertir a double
-                            val valorSinComas = egresos.valor.replace(",", "")
-                            totalEgresos += valorSinComas.toDouble()
+                            val valorSinComas = ingresos.valor.replace(",", "")
+                            totalIngresos += valorSinComas.toDouble()
                         }
                     }
 
                     setupRecyclerView()
 
                     val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-                    tvTotalPayments.text = numberFormat.format(totalEgresos)
+                    tvTotalPayments.text = numberFormat.format(totalIngresos)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     Log.e("IngresosFragment", "Database error: ${error.message}")
                 }
             })
-
         }
     }
 
     private fun setupRecyclerView() {
-        adapter = IngresosAdapter(egresosList)
-        rvEgresos.layoutManager = LinearLayoutManager(requireContext())
-        rvEgresos.adapter = adapter
+        adapter = IngresosAdapter(ingresosList)
+        rvIngresos.layoutManager = LinearLayoutManager(requireContext())
+        rvIngresos.adapter = adapter
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val itemToRemove = ingresosList[position]
+                showDeleteConfirmationDialog(position, itemToRemove)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(rvIngresos)
     }
+
+    private fun showDeleteConfirmationDialog(position: Int, itemToRemove: Ingresos) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de que deseas eliminar este elemento?")
+            .setPositiveButton("Eliminar") { dialog, which ->
+                deleteItemFromFirebase(position, itemToRemove)
+            }
+            .setNegativeButton("Cancelar") { dialog, which ->
+                adapter.notifyItemChanged(position)
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun deleteItemFromFirebase(position: Int, itemToRemove: Ingresos) {
+        val user = auth.currentUser
+        if (user != null) {
+            val uid = user.uid
+            val ingresosRef = database.getReference("users").child(uid).child("ingresos")
+            ingresosRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (ingresosSnapshot in snapshot.children) {
+                        val ingresos = ingresosSnapshot.getValue(Ingresos::class.java)
+                        if (ingresos != null && ingresosMatches(ingresos, itemToRemove)) {
+                            ingresosSnapshot.ref.removeValue().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // Elimina el elemento de la lista local
+                                    adapter.removeItem(position)
+
+                                    // Vuelve a calcular el total después de la eliminación
+                                    fetchIngresos()
+                                } else {
+                                    // Manejar error en la eliminación de Firebase
+                                    Log.e("IngresosFragment", "Error al eliminar el elemento de Firebase")
+                                    adapter.notifyItemChanged(position)
+                                }
+                            }
+                            break // Sal del bucle después de encontrar la coincidencia
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("IngresosFragment", "Database error: ${error.message}")
+                }
+            })
+        }
+    }
+
+    private fun ingresosMatches(ingresos: Ingresos, itemToRemove: Ingresos): Boolean {
+        // Verifica si los campos coinciden
+        return ingresos.nombre == itemToRemove.nombre &&
+                ingresos.descripcion == itemToRemove.descripcion &&
+                ingresos.valor == itemToRemove.valor
+    }
+
     data class Ingresos(
         val valor: String = "",
         val categoria: String = "",

@@ -17,5 +17,10 @@ class EgresosAdapter(val egresosList: MutableList<EgresosFragment.Egresos>) : Re
     }
 
     override fun getItemCount(): Int =  egresosList.size
+
+    fun removeItem(position: Int) {
+        egresosList.removeAt(position)
+        notifyItemRemoved(position)
+    }
 }
 

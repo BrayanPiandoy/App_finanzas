@@ -88,7 +88,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupPieChart(view: View) {
+
         pieChart = view.findViewById(R.id.pieChart)
+        pieChart.description.isEnabled = false
         val user = auth.currentUser
         if (user != null) {
             val uid = user.uid

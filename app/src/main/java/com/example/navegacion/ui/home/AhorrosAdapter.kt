@@ -1,11 +1,11 @@
-package com.example.navegacion.ui.ahorros
+package com.example.navegacion.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.navegacion.R
 
-class AhorrosAdapter(val ahorrosList: MutableList<AhorrosFragment.Ahorros>) : RecyclerView.Adapter<AhorrosViewHolder>() {
+class AhorrosAdapter(val ahorrosList: MutableList<AhorrosHomeFragment.Ahorro>) : RecyclerView.Adapter<AhorrosViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AhorrosViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_layout, parent, false)
@@ -19,10 +19,4 @@ class AhorrosAdapter(val ahorrosList: MutableList<AhorrosFragment.Ahorros>) : Re
 
     override fun getItemCount(): Int =  ahorrosList.size
 
-    fun removeItem(position: Int) {
-        ahorrosList.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
 }
-
